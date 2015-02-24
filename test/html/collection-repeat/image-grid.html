@@ -32,36 +32,10 @@
     </ion-content>
   <script>
 angular.module('ionic').controller('MainCtrl',MainCtrl)
-function MainCtrl($scope, $ionicScrollDelegate, $timeout, $q, $ionicLoading, $ionicModal) {
+function MainCtrl($scope) {
   $scope.items = [];
-  function addImage() {
-    var i = $scope.items.length;
-    $scope.items.push({
-      text: 'Item ' + i,
-      image: 'http://placekitten.com/'+(100+50%i)+'/'+(100+50%i)
-    });
-  }
-  for (var i = 0; i < 10000; i++) addImage();
-
-  $scope.scrollBottom = function() {
-    $ionicScrollDelegate.scrollBottom(true);
-  };
-
-  $scope.loadMore = function() {
-    $timeout(function() {
-      var n = 100;//1 + Math.floor(4*Math.random());
-      for (var i = 0; i < n; i++) addImage();
-      $scope.$broadcast('scroll.infiniteScrollComplete');
-      $scope.$broadcast('scroll.refreshComplete');
-    }, 500);
-  };
-
-  $scope.openModal = function() {
-    $ionicModal.fromTemplate('<ion-modal-view>hello</ion-modal-view>').show();
-  };
+  for (var i = 0; i < 10000; i++) items.push(i);
 }
   </script>
-  <style>
-  </style>
 </body>
 </html>

@@ -1,6 +1,5 @@
 var GithubApi = require('github');
 var gulp = require('gulp');
-var jsStringEscape = require('js-string-escape');
 var path = require('canonical-path');
 var pkg = require('./package.json');
 var request = require('request');
@@ -164,29 +163,9 @@ gulp.task('vendor', function() {
 });
 
 gulp.task('scripts', function() {
-  var workers = gulp.src(buildConfig.workerFiles)
-
-  function mapWorkerFile() {
-    return es.map(function(file, cb) {
-      var contents = file.contents.toString();
-      var name = path.basename(file.path).replace(path.extname(file.path), '');
-      contents = "ionic.WORKER_SCRIPTS['" + name + "'] = '" + jsStringEscape(contents) + "'";
-      file.contents = new Buffer(contents);
-      cb(null, file);
-    });
-  }
-  function isWorkerFile(file) {
-    return file.path.match('js/workers/');
-  }
-
-  var sources = gulp.src(buildConfig.ionicFiles)
-
-  return gulp.src(
-    buildConfig.ionicFiles.concat(buildConfig.workerFiles)
-  )
-    .pipe(gulpif(isWorkerFile, mapWorkerFile()))
+  return gulp.src(buildConfig.ionicFiles)
     .pipe(gulpif(IS_RELEASE_BUILD, stripDebug()))
-    .pipe(template({ pkg: pkg, dev: !IS_RELEASE_BUILD }))
+    .pipe(template({ pkg: pkg }))
     .pipe(concat('ionic.js'))
     .pipe(header(buildConfig.closureStart))
     .pipe(footer(buildConfig.closureEnd))
@@ -201,7 +180,6 @@ gulp.task('scripts', function() {
 gulp.task('scripts-ng', function() {
   return gulp.src(buildConfig.angularIonicFiles)
     .pipe(gulpif(IS_RELEASE_BUILD, stripDebug()))
-    .pipe(template({ pkg: pkg, dev: !IS_RELEASE_BUILD }))
     .pipe(concat('ionic-angular.js'))
     .pipe(header(buildConfig.closureStart))
     .pipe(footer(buildConfig.closureEnd))
@@ -211,9 +189,6 @@ gulp.task('scripts-ng', function() {
     .pipe(rename({ extname: '.min.js' }))
     .pipe(header(banner))
     .pipe(gulp.dest(buildConfig.dist + '/js'));
-});
-
-gulp.task('workers', function() {
 });
 
 gulp.task('sass', function(done) {
